@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Cardario_M2</string>
+    <string name="app_name">Cardapio M2</string>
+    <string name="item_image_desc">Imagem do item do menu</string>
 </resources>

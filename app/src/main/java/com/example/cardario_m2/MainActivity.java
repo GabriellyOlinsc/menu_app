@@ -1,8 +1,14 @@
 package com.example.cardario_m2;
 
 
+import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,44 +22,47 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
+    @SuppressLint("DefaultLocale")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.i("gaby", "creating");
 
         LinearLayout container = findViewById(R.id.linearLayout);
-        Log.i("gaby", "creating linear layout");
 
         List<Dish> dishes = loadJSONFromAsset();
-        Log.i("gaby", "kaks" + dishes);
 
         if (dishes != null) {
             for (Dish dish : dishes) {
-                TextView textView = new TextView(this);
-                textView.setText(String.format("%s - R$ %.2f", dish.getName(), dish.getPrice()));
-                textView.setTextSize(18);
-                textView.setPadding(16, 16, 16, 16);
+                View menuItemView = getLayoutInflater().inflate(R.layout.menu_item, container, false);
 
-                // Definindo os parâmetros de layout para ocupar a largura total
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, // Largura igual ao contêiner
-                        LinearLayout.LayoutParams.WRAP_CONTENT  // Altura ajustável ao conteúdo
-                );
-                params.setMargins(0, 0, 0, 16); // Margem inferior para espaçamento
-                textView.setLayoutParams(params);
+                // Encontrar os componentes do layout
+                TextView nameTextView = menuItemView.findViewById(R.id.item_text);
+                TextView priceTextView = menuItemView.findViewById(R.id.item_price);
+                ImageView imageView = menuItemView.findViewById(R.id.item_image);
 
-                // Estilizando o fundo do TextView como um retângulo
-                textView.setBackgroundResource(android.R.drawable.dialog_holo_light_frame);
-                ;
+                // Definir o texto
+                nameTextView.setText(dish.getName());
+                priceTextView.setText(String.format("R$ %.2f", dish.getPrice()));
 
-                container.addView(textView);
+                // Carregar a imagem usando AsyncTask
+                if (dish.getImage() != null && !dish.getImage().isEmpty()) {
+                    new ThreadImageFile(imageView).execute(dish.getImage());
+                } else {
+                    imageView.setVisibility(View.GONE); // Esconder ImageView se não houver URL de imagem
+                }
+
+                // Adicionar o menuItemView ao layout
+                container.addView(menuItemView);
             }
         }
     }
+
     private List<Dish> loadJSONFromAsset() {
         String json = null;
         try {
@@ -71,12 +80,43 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         Menu cardapio = gson.fromJson(json, Menu.class);
         if (cardapio != null) {
-            List<Dish> dishes = cardapio.getFoods();
-            // Log the result
-            Log.d("gaby", "Loaded dishes: " + dishes.toString());
-            return dishes;
+            return cardapio.getFoods();
         }
-        Log.d("EMPTY", "Loaded dishes: " );
         return null;
     }
+
+    private static class ThreadImageFile extends AsyncTask<String, Void, Bitmap> {
+        private final ImageView imageView;
+
+        public ThreadImageFile(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            try {
+                String imageURL = urls[0];
+                URL url = new URL(imageURL);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("GET");
+                InputStream is = con.getInputStream();
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                is.close();
+                return bitmap;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+            } else {
+                imageView.setVisibility(View.GONE);
+            }
+        }
+    }
+
 }
