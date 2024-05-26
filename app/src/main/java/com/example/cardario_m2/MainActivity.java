@@ -35,7 +35,21 @@ public class MainActivity extends AppCompatActivity {
             for (Dish dish : dishes) {
                 TextView textView = new TextView(this);
                 textView.setText(String.format("%s - R$ %.2f", dish.getName(), dish.getPrice()));
-                textView.setPadding(8, 8, 8, 8);
+                textView.setTextSize(18);
+                textView.setPadding(16, 16, 16, 16);
+
+                // Definindo os parâmetros de layout para ocupar a largura total
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, // Largura igual ao contêiner
+                        LinearLayout.LayoutParams.WRAP_CONTENT  // Altura ajustável ao conteúdo
+                );
+                params.setMargins(0, 0, 0, 16); // Margem inferior para espaçamento
+                textView.setLayoutParams(params);
+
+                // Estilizando o fundo do TextView como um retângulo
+                textView.setBackgroundResource(android.R.drawable.dialog_holo_light_frame);
+                ;
+
                 container.addView(textView);
             }
         }
@@ -50,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             is.close();
             json = new String(buffer, "UTF-8");
         } catch (IOException ex) {
+
             ex.printStackTrace();
             return null;
         }
