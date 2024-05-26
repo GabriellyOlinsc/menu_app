@@ -13,5 +13,6 @@ The primary objective of this project is to create an aesthetically pleasing mob
 2. Ensure that the presentation of data is visually appealing.
 3. Save all fetched data locally using SQLite for structured data and the file system for images, to be able to present the data even when offline.
 4. If the remote service is unavailable, display the locally stored data, including images, and show "to be consulted" instead of the price when offline.
+   
 
 This project explores the concepts of reading external and local data sources, emphasizing robust data handling and user experience in an offline-first mobile application.
