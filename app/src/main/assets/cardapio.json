@@ -1,0 +1,44 @@
+{
+    "foods": [
+      {
+        "name": "Coxinha",
+        "price": 17.5
+      },
+      {
+        "name": "Pastel",
+        "price": 35
+      },
+      {
+        "name": "Pão de Queijo",
+        "price": 21
+      },
+      {
+        "name": "Strogonoff",
+        "price": 35
+      },
+      {
+        "name": "Feijoada",
+        "price": 24.5
+      },
+      {
+        "name": "Brigadeiro",
+        "price": 35
+      },
+      {
+        "name": "Beijinho",
+        "price": 35
+      },
+      {
+        "name": "Churrasco",
+        "price": 7
+      },
+      {
+        "name": "Pudim",
+        "price": 28
+      },
+      {
+        "name": "Romeu e Julieta",
+        "price": 21
+      }
+    ]
+}
